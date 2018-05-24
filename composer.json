@@ -1,17 +1,17 @@
 {
-    "name": "eventhomes/laravel-mandrillhooks",
-    "description": "A simple Mandrill webhook controller to help with events. Compatible with Laravel 5+ and Lumen 5+.",
+    "name": "brentnd/laravel-sparkposthooks",
+    "description": "A simple SparkPost webhook controller to help with events. Compatible with Laravel 5+ and Lumen 5+.",
     "keywords": [
         "laravel",
         "lumen",
-        "mandrill",
+        "sparkpost",
         "webhooks",
         "mail"
     ],
     "license": "MIT",
     "authors": [{
-        "name": "Bill Richards",
-        "email": "roundedvision@gmail.com"
+        "name": "Brent Dimmig",
+        "email": "brentdimmig@gmail.com"
     }],
     "require": {
         "php": ">=5.5.9",
@@ -20,7 +20,7 @@
     },
     "autoload": {
         "psr-4": {
-            "EventHomes\\Api\\Webhooks\\": "src/"
+            "Brentnd\\Api\\Webhooks\\": "src/"
         }
     },
     "minimum-stability": "stable"

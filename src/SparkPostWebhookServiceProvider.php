@@ -1,10 +1,10 @@
 <?php
 
-namespace EventHomes\Api\Webhooks;
+namespace Brentnd\Api\Webhooks;
 
 use Illuminate\Support\ServiceProvider;
 
-class MandrillWebhookServiceProvider extends ServiceProvider
+class SparkPostWebhookServiceProvider extends ServiceProvider
 {
     /**
     * Bootstrap the application events.
@@ -13,7 +13,7 @@ class MandrillWebhookServiceProvider extends ServiceProvider
     */
     public function boot()
     {
-        $this->publishes([__DIR__ . '/config/config.php' => config_path('mandrill-webhooks.php')]);
+        $this->publishes([__DIR__ . '/config/config.php' => config_path('sparkpost-webhooks.php')]);
     }
 
     /**
@@ -23,6 +23,6 @@ class MandrillWebhookServiceProvider extends ServiceProvider
     */
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/config/config.php', 'mandrill-webhooks');
+        $this->mergeConfigFrom(__DIR__ . '/config/config.php', 'sparkpost-webhooks');
     }
 }
