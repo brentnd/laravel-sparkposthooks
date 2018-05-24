@@ -44,7 +44,7 @@ post('sparkpost-webhook', ['as' => 'sparkpost.webhook', 'uses' => 'MySparkPostCo
 ```
 3) [Exclude your route from CSRF protection](https://laravel.com/docs/5.4/csrf#csrf-excluding-uris) so it will not fail.
 
-4) Make sure you add your webhook in SparkPost to point to your route. You can do this here: TODO
+4) Make sure you add your webhook in SparkPost to point to your route. You can do this here: https://app.sparkpost.com/webhooks
 
 ## (Optional) Webhook Authentication
 TODO: If you would like to increase the security of the webhooks. Add the *SparkPostWebhookServiceProvider* provider to the providers array in config/app.php
@@ -80,4 +80,4 @@ Rejection Blacklist Changes	| handleBlacklist()  | triggered when a Rejection Bl
 Rejection Whitelist Changes	| handleWhitelist()  | triggered when a Rejection Whitelist entry is added or removed
 
 ## Contributors
-Based on eventhomes/laravel-mandrillhooks
+Based on [eventhomes/laravel-mandrillhooks](https://github.com/eventhomes/laravel-mandrillhooks)
