@@ -17,32 +17,33 @@ class SparkPostWebhookController extends Controller
      */
     public function handleWebHook(Request $request)
     {
-        $events = $this->getJsonPayloadFromRequest($request);
-
-        foreach ($events as $event) {
-            $eventName = isset($event['event']) ? $event['event'] : 'undefined';
-            if($eventName == 'undefined' && isset($event['type'])){
-                $eventName = $event['type'];
-            }
-            $method = 'handle' . studly_case(str_replace('.', '_', $eventName));
-
-            if (method_exists($this, $method)) {
-                $this->{$method}($event);
+        foreach ($request->all() as $request) {
+            if (empty($request['msys'])) {
+                $this->callEventMethod('ping', []);
+            } else {
+                $event = $request['msys'];
+                foreach ($event as $eventType=>$event) {
+                    $eventName = $eventType . '_' . $event['type'];
+                    $this->callEventMethod($eventName, $event);
+                }
             }
         }
-
-        return new Response;
+        return response(null, 204);
     }
 
     /**
-     * Pull the SparkPost payload from the json
+     * Call the associated event method if it exists
+     * in derived class
      *
-     * @param $request
-     *
-     * @return array
+     * @param $eventName
+     * @param $payload
      */
-    private function getJsonPayloadFromRequest($request)
+    private function callEventMethod($eventName, $payload)
     {
-        return (array) json_decode($request->get('sparkpost_events'), true);
+        $method = 'handle' . studly_case($eventName);
+
+        if (method_exists($this, $method)) {
+            $this->{$method}($payload);
+        }        
     }
 }

@@ -17,13 +17,13 @@ use Brentnd\Api\Webhooks\SparkPostWebhookController;
 class MySparkPostController extends SparkPostWebhookController {
 
     /**
-     * Handle a hard bounced email
+     * Handle a bounced email
      *
      * @param $payload
      */
-    public function handleHardBounce($payload)
+    public function handleMessageEventBounce($payload)
     {
-        $email = $payload['msg']['email'];
+        $email = $payload['rcpt_to'];
     }
 
     /**
@@ -31,53 +31,50 @@ class MySparkPostController extends SparkPostWebhookController {
      *
      * @param $payload
      */
-    public function handleReject($payload)
+    public function handleMessageEventPolicyRejection($payload)
     {
-        $email = $payload['msg']['email'];
+        $email = $payload['rcpt_to'];
+    }
+
+    /**
+     * Handle an email open
+     *
+     * @param $payload
+     */
+    public function handleTrackEventOpen($payload)
+    {
+        $transmissionId = $payload['transmission_id'];
     }
 }
 ```
 
 2) Create the route to handle the webhook. In your routes.php file add the following.
 ```php
-post('sparkpost-webhook', ['as' => 'sparkpost.webhook', 'uses' => 'MySparkPostController@handleWebHook']);
+post('sparkpost-webhook', ['as' => 'sparkpost.webhook', 'uses' => 'MySparkPostController@handleWebhook']);
 ```
 3) [Exclude your route from CSRF protection](https://laravel.com/docs/5.4/csrf#csrf-excluding-uris) so it will not fail.
 
 4) Make sure you add your webhook in SparkPost to point to your route. You can do this here: https://app.sparkpost.com/webhooks
 
-## (Optional) Webhook Authentication
-TODO: If you would like to increase the security of the webhooks. Add the *SparkPostWebhookServiceProvider* provider to the providers array in config/app.php
-
-```php
-'providers' => [
-  ...
-  Brentnd\Api\Webhooks\SparkPostWebhookServiceProvider::class,
-],
-```
-
-Next, publish the configuration via
-```php
-php artisan vendor:publish --provider="Brentnd\Api\Webhooks\SparkPostWebhookServiceProvider"
-```
-Simply add your SparkPost webhook key in the config file and requests will be authenticated.
-
 ## Webhook Events
 [Webhook event types](https://www.sparkpost.com/docs/tech-resources/webhook-event-reference/#event-types):
 
-Event type              | Method             | Description
-------------            |------------        |---------------
-Sent	                | handleSend()       | message has been sent successfully
-Bounced	                | handleHardBounce() | message has hard bounced
-Opened	                | hadleOpen()        | recipient opened a message; will only occur when open tracking is enabled
-Marked As Spam	        | handleSpam()       | recipient marked a message as spam
-Rejected	            | handleReject()     | message was rejected
-Delayed	                | handleDeferral()   | message has been sent, but the receiving server has indicated mail is being delivered too quickly and SparkPost should slow down sending temporarily
-Soft-Bounced	        | handleSoftBounce() | message has soft bounced
-Clicked	                | handleClick()      | recipient clicked a link in a message; will only occur when click tracking is enabled
-Recipient Unsubscribes  | handleUnsub()      | recipient unsubscribes
-Rejection Blacklist Changes	| handleBlacklist()  | triggered when a Rejection Blacklist entry is added, changed, or removed
-Rejection Whitelist Changes	| handleWhitelist()  | triggered when a Rejection Whitelist entry is added or removed
+Common events and their handlers. For other events, just follow the same pattern.
+
+Event type         | Event             | Method  
+-----------        |-------------      |-------
+Ping               | -                 | handlePing()
+Message Events     | Bounce            | handleMessageEventBounce()
+Message Events     | Delivery          | handleMessageEventDelivery()
+Message Events     | Injection         | handleMessageEventInjection()
+Message Events     | Policy Rejection  | handleMessageEventPolicyRejection()
+Message Events     | Delay             | handleMessageEventDelay()
+Engagement Events  | Click             | handleTrackEventClick()
+Engagement Events  | Open              | handleTrackEventOpen()
+Engagement Events  | Initial Open      | handleTrackEventInitialOpen()
+Unsubscribe Events | List Unsubscribe  | handleUnsubscribeEventListUnsubscribe()
+Unsubscribe Events | Link Unsubscribe  | handleUnsubscribeEventLinkUnsubscribe()
+
 
 ## Contributors
 Based on [eventhomes/laravel-mandrillhooks](https://github.com/eventhomes/laravel-mandrillhooks)
